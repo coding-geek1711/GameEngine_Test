@@ -24,7 +24,8 @@ Maheswaran and S krishna Bhat\n";
             shape.setFillColor(sf::Color::Green);
             shape.setOrigin(25.f, 25.f);
 
-            sf::Vector2f *vel = new sf::Vector2f(10.f, 0.f);
+            sf::Vector2f vel(10.f, 0.f);
+            float spd = 10.f;
             while (window.isOpen())
             {
                 sf::Event event;
@@ -33,7 +34,8 @@ Maheswaran and S krishna Bhat\n";
                     if (event.type == sf::Event::Closed)
                         window.close();
                 }
-                shape.rotate(10.f * clk.getElapsedTime().asSeconds());
+                shape.rotate(spd * clk.getElapsedTime().asSeconds());
+                shape.move(vel * clk.getElapsedTime().asSeconds());
                 clk.restart();
                 window.clear();
                 window.draw(shape);
