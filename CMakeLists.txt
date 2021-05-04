@@ -6,6 +6,24 @@ enable_testing()
 
 add_executable(Game_Engine_Test main.cpp)
 
+find_package(SFML 2.5
+    COMPONENTS
+        system window graphics network audio REQUIRED
+    )
+
+target_include_directories(
+    Game_Engine_Test
+    PRIVATE
+    "${PROJECT_BINARY_DIR}"
+)
+
+target_link_libraries(Game_Engine_Test 
+    sfml-graphics 
+    sfml-window 
+    sfml-system
+    sfml-audio
+    sfml-network)
+
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
