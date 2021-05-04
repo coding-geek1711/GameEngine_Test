@@ -18,9 +18,13 @@ Maheswaran and S krishna Bhat\n";
         if (strcmp(argv[1], "sfml") == 0)
         {
             sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-            sf::CircleShape shape(100.f);
+            sf::Clock clk;
+            sf::RectangleShape shape({50.f, 50.f});
+            shape.setPosition({100.f, 100.f});
             shape.setFillColor(sf::Color::Green);
+            shape.setOrigin(25.f, 25.f);
 
+            sf::Vector2f *vel = new sf::Vector2f(10.f, 0.f);
             while (window.isOpen())
             {
                 sf::Event event;
@@ -29,7 +33,8 @@ Maheswaran and S krishna Bhat\n";
                     if (event.type == sf::Event::Closed)
                         window.close();
                 }
-
+                shape.rotate(10.f * clk.getElapsedTime().asSeconds());
+                clk.restart();
                 window.clear();
                 window.draw(shape);
                 window.display();
