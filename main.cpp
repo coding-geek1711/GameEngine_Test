@@ -19,10 +19,15 @@ Maheswaran and S krishna Bhat\n";
         {
             sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
             sf::Clock clk;
-            sf::RectangleShape shape({50.f, 50.f});
-            shape.setPosition({100.f, 100.f});
-            shape.setFillColor(sf::Color::Green);
-            shape.setOrigin(25.f, 25.f);
+            sf::RectangleShape rectshape({50.f, 50.f});
+            rectshape.setPosition({100.f, 100.f});
+            rectshape.setFillColor(sf::Color::Green);
+            rectshape.setOrigin(25.f, 25.f);
+
+            sf::CircleShape circshape(50.f);
+            circshape.setFillColor(sf::Color::Magenta);
+            circshape.setOrigin({25.f, 25.f});
+            circshape.setPosition({150.f, 150.f});
 
             sf::Vector2f vel(10.f, 0.f);
             float spd = 10.f;
@@ -34,11 +39,13 @@ Maheswaran and S krishna Bhat\n";
                     if (event.type == sf::Event::Closed)
                         window.close();
                 }
-                shape.rotate(spd * clk.getElapsedTime().asSeconds());
-                shape.move(vel * clk.getElapsedTime().asSeconds());
+                rectshape.rotate(spd * clk.getElapsedTime().asSeconds());
+                rectshape.move(vel * clk.getElapsedTime().asSeconds());
+                circshape.move(sf::Vector2f({0.f, -10.f}) * clk.getElapsedTime().asSeconds());
                 clk.restart();
                 window.clear();
-                window.draw(shape);
+                window.draw(rectshape);
+                window.draw(circshape);
                 window.display();
             }
         }
