@@ -19,10 +19,11 @@ Maheswaran and S krishna Bhat\n";
         {
             sf::ContextSettings settings;
             settings.antialiasingLevel = 8;
-            sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!", sf::Style::Default, settings);
+
+            sf::RenderWindow window(sf::VideoMode(800, 800), "collision_detection.maybe", sf::Style::Default, settings);
             sf::Clock clk;
             sf::RectangleShape rectshape({50.f, 50.f});
-            rectshape.setPosition({100.f, 100.f});
+            rectshape.setPosition({400.f, 150.f});
             rectshape.setFillColor(sf::Color::Green);
             rectshape.setOrigin(25.f, 25.f);
             sf::FloatRect flrect;
@@ -32,7 +33,7 @@ Maheswaran and S krishna Bhat\n";
             sf::CircleShape circshape(50.f);
             circshape.setFillColor(sf::Color::Magenta);
             circshape.setOrigin({25.f, 25.f});
-            circshape.setPosition({150.f, 150.f});
+            circshape.setPosition({550.f, 550.f});
             sf::FloatRect flcirc;
 
             sf::Text te;
@@ -44,6 +45,7 @@ Maheswaran and S krishna Bhat\n";
 
             sf::Vector2f vel(10.f, 0.f);
             float spd = 10.f;
+            auto cvel = sf::Vector2f({0.f, -20.f});
             while (window.isOpen())
             {
                 sf::Event event;
@@ -52,26 +54,27 @@ Maheswaran and S krishna Bhat\n";
                     if (event.type == sf::Event::Closed)
                         window.close();
                 }
+                window.clear();
                 flrect = rectshape.getGlobalBounds();
-                std::cout << flrect.left << '\n';
+                // std::cout << flrect.left << '\n';
                 flcirc = circshape.getGlobalBounds();
 
-                flcirc.intersects(flrect) ? te.setString("True") : te.setString("False");
+                if (!flrect.intersects(flcirc))
+                {
+                    flcirc.intersects(flrect) ? te.setString("True") : te.setString("False");
 
-                rectshape.rotate(spd * clk.getElapsedTime().asSeconds());
-                rectshape.move(vel * clk.getElapsedTime().asSeconds());
-                circshape.move(sf::Vector2f({0.f, -10.f}) * clk.getElapsedTime().asSeconds());
-                // std::cout << flrect.intersects(flcirc);
-                window.clear();
+                    rectshape.rotate(spd * clk.getElapsedTime().asSeconds());
+                    rectshape.move(vel * clk.getElapsedTime().asSeconds());
+                    circshape.move(cvel * clk.getElapsedTime().asSeconds());
+                    // std::cout << flrect.intersects(flcirc);
 
-                window.draw(rectshape);
-                window.draw(circshape);
-
+                    window.draw(rectshape);
+                    window.draw(circshape);
+                }
                 clk.restart();
-                window.clear();
 
-                window.draw(rectshape);
-                window.draw(circshape);
+                // window.draw(rectshape);
+                // window.draw(circshape);
                 // std::cout << flrect.intersects(flcirc);
                 window.draw(te);
                 window.display();
