@@ -27,11 +27,17 @@
 
 #define rect_dims {100.f, 50.f}
 
+
+sf::Vector2f getVel(float x, float y)
+{
+    return sf::Vector2f({x, y});
+}
+
 int main(int argc, char **argv)
 {
     std::cout << "hi this is the first iteration of Game Engine by\
     Maheswaran and S krishna Bhat\n";
-
+    int count = 0;
     if (argc > 1)
     {
         // std::cout << "tihs is nice\n";
@@ -65,8 +71,7 @@ int main(int argc, char **argv)
 
             sf::Vector2f vel(10.f, 0.f);
             float spd = 10.f;
-            auto cvel = sf::Vector2f({0.f, -20.f});
-
+            // auto cvel = sf::Vector2f({0.f, -200.f});
             while (window.isOpen())
             {
                 sf::Event event;
@@ -84,26 +89,48 @@ int main(int argc, char **argv)
                 if (!flrect.intersects(flcirc))
                 {
                     flcirc.intersects(flrect) ? te.setString("True") : te.setString("False");
+                    
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                    {
+                        std::cout << "Up \n";
+                        sf::Vector2f cvel = getVel(0.f, -100.f);
+                        circshape.move(cvel * clk.getElapsedTime().asSeconds());
+                    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                    {
+                        std::cout << "Down \n";
+                        sf::Vector2f cvel = getVel(0.f, 100.f);
+                        circshape.move(cvel * clk.getElapsedTime().asSeconds());
+                    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                    {
+                        std::cout << "Left \n";
+                        sf::Vector2f cvel = getVel(-100.f, 0.f);
+                        circshape.move(cvel * clk.getElapsedTime().asSeconds());
+                    } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                    {
+                        std::cout << "Right \n";
+                        sf::Vector2f cvel = getVel(100.f, 0.f);
+                        circshape.move(cvel * clk.getElapsedTime().asSeconds());
+                    }
+
+
 
                     rectshape.rotate(spd * clk.getElapsedTime().asSeconds());
-                    rectshape.move(vel * clk.getElapsedTime().asSeconds());
-                    circshape.move(cvel * clk.getElapsedTime().asSeconds());
+                    // rectshape.move(vel * clk.getElapsedTime().asSeconds());
+                    // circshape.move(cvel * clk.getElapsedTime().asSeconds());
                     // std::cout << flrect.intersects(flcirc);
 
                     window.draw(rectshape);
                     window.draw(circshape);
                 }
+
                 clk.restart();
 
-                // window.draw(rectshape);
-                // window.draw(circshape);
-                // std::cout << flrect.intersects(flcirc);
+
                 window.draw(te);
                 window.display();
 
             }
         }
-        // std::cout << argv[1];
     }
 
     // decide the number of enemies and stuff
