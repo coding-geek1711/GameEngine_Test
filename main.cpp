@@ -33,11 +33,27 @@ sf::Vector2f getVel(float x, float y)
     return sf::Vector2f({x, y});
 }
 
+void setKeyPressBools(bool*  moving_up, bool* moving_right, bool* moving_down, bool* moving_left)
+{
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        *moving_up = true;
+    
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        *moving_down = true;
+    
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        *moving_left = true;
+    
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        *moving_right = true;
+}
+
+
 int main(int argc, char **argv)
 {
     std::cout << "hi this is the first iteration of Game Engine by\
     Maheswaran and S krishna Bhat\n";
-    int count = 0;
+    bool moving_right = false, moving_left = false, moving_up = false, moving_down = false;
     if (argc > 1)
     {
         // std::cout << "tihs is nice\n";
@@ -77,6 +93,42 @@ int main(int argc, char **argv)
                 sf::Event event;
                 while (window.pollEvent(event))
                 {
+                    // setKeyPressBools(&moving_up, &moving_right, &moving_down, &moving_left);
+                    std::cout << "EVent registered!!!\n";
+                    switch (event.type) {
+                        case sf::Event::KeyPressed:
+                            if (event.key.code == sf::Keyboard::Right)
+                                moving_right = true;
+                            
+                            else if (event.key.code == sf::Keyboard::Up)
+                                moving_up = true;
+                            
+                            else if (event.key.code == sf::Keyboard::Left)
+                                moving_left = true;
+                            
+                            else if (event.key.code == sf::Keyboard::Down)
+                                moving_down = true;
+                            break;
+                        case sf::Event::KeyReleased:
+                            if (event.key.code == sf::Keyboard::Right)
+                                moving_right = false;
+
+                            else if (event.key.code == sf::Keyboard::Up)
+                                moving_up = false;
+
+                            else if (event.key.code == sf::Keyboard::Left)
+                                moving_left = false;
+
+                            else if (event.key.code == sf::Keyboard::Down)
+                                moving_down = false;
+                            break;
+                        case sf::Event::Closed:
+                            window.close();
+                            break;
+                        default:
+                            break;
+                    }
+
                     if (event.type == sf::Event::Closed)
                         window.close();
                 }
@@ -90,29 +142,32 @@ int main(int argc, char **argv)
                 {
                     flcirc.intersects(flrect) ? te.setString("True") : te.setString("False");
                     
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                    {
-                        std::cout << "Up \n";
-                        sf::Vector2f cvel = getVel(0.f, -100.f);
-                        circshape.move(cvel * clk.getElapsedTime().asSeconds());
-                    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                    {
-                        std::cout << "Down \n";
-                        sf::Vector2f cvel = getVel(0.f, 100.f);
-                        circshape.move(cvel * clk.getElapsedTime().asSeconds());
-                    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                    {
-                        std::cout << "Left \n";
-                        sf::Vector2f cvel = getVel(-100.f, 0.f);
-                        circshape.move(cvel * clk.getElapsedTime().asSeconds());
-                    } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                    {
-                        std::cout << "Right \n";
-                        sf::Vector2f cvel = getVel(100.f, 0.f);
-                        circshape.move(cvel * clk.getElapsedTime().asSeconds());
-                    }
+                    
 
 
+                    if(moving_right)
+                        circshape.move(getVel(100.f, 0.f) * clk.getElapsedTime().asSeconds());
+
+                    if(moving_up)
+                        circshape.move(getVel(0.f, -100.f) * clk.getElapsedTime().asSeconds());
+
+                    if(moving_down)
+                        circshape.move(getVel(0.f, 100.f) * clk.getElapsedTime().asSeconds());
+
+                    if(moving_left)
+                        circshape.move(getVel(-100.f, 0.f) * clk.getElapsedTime().asSeconds());
+
+                    if(moving_up && moving_right)
+                        circshape.move(getVel(100.f, -100.f) * clk.getElapsedTime().asSeconds());
+
+                    if(moving_up && moving_left)
+                        circshape.move(getVel(-100.f, -100.f) * clk.getElapsedTime().asSeconds());
+
+                    if(moving_down && moving_right)
+                        circshape.move(getVel(100.f, 100.f) * clk.getElapsedTime().asSeconds());
+
+                    if(moving_down && moving_left)
+                        circshape.move(getVel(-100.f, 100.f) * clk.getElapsedTime().asSeconds());
 
                     rectshape.rotate(spd * clk.getElapsedTime().asSeconds());
                     // rectshape.move(vel * clk.getElapsedTime().asSeconds());
