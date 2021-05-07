@@ -33,21 +33,6 @@ sf::Vector2f getVel(float x, float y)
     return sf::Vector2f({x, y});
 }
 
-void setKeyPressBools(bool*  moving_up, bool* moving_right, bool* moving_down, bool* moving_left)
-{
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        *moving_up = true;
-    
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        *moving_down = true;
-    
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        *moving_left = true;
-    
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        *moving_right = true;
-}
-
 
 int main(int argc, char **argv)
 {
