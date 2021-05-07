@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 {
     std::cout << "hi this is the first iteration of Game Engine by\
     Maheswaran and S krishna Bhat\n";
-    bool moving_right = false, moving_left = false, moving_up = false, moving_down = false;
+    // bool moving_right = false, moving_left = false, moving_up = false, moving_down = false;
     if (argc > 1)
     {
         // std::cout << "tihs is nice\n";
