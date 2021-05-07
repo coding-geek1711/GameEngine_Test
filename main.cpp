@@ -7,7 +7,6 @@
 #include <SFML/Network.hpp>
 #include <SFML/Audio.hpp>
 
-
 /*
     Some Useful Functions:-
     1. VideoMode sets video frame size
@@ -25,14 +24,15 @@
 #define frame_height 200
 #define frame_width 400
 
-#define rect_dims {100.f, 50.f}
-
+#define rect_dims   \
+    {               \
+        100.f, 50.f \
+    }
 
 sf::Vector2f getVel(float x, float y)
 {
     return sf::Vector2f({x, y});
 }
-
 
 int main(int argc, char **argv)
 {
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
             te.setCharacterSize(24);
             te.setFillColor(sf::Color::White);
 
-            sf::Vector2f vel(10.f, 0.f);
+            sf::Vector2f vel(0.f, 0.f);
             float spd = 10.f;
             // auto cvel = sf::Vector2f({0.f, -200.f});
             while (window.isOpen())
@@ -80,38 +80,39 @@ int main(int argc, char **argv)
                 {
                     // setKeyPressBools(&moving_up, &moving_right, &moving_down, &moving_left);
                     std::cout << "EVent registered!!!\n";
-                    switch (event.type) {
-                        case sf::Event::KeyPressed:
-                            if (event.key.code == sf::Keyboard::Right)
-                                moving_right = true;
-                            
-                            else if (event.key.code == sf::Keyboard::Up)
-                                moving_up = true;
-                            
-                            else if (event.key.code == sf::Keyboard::Left)
-                                moving_left = true;
-                            
-                            else if (event.key.code == sf::Keyboard::Down)
-                                moving_down = true;
-                            break;
-                        case sf::Event::KeyReleased:
-                            if (event.key.code == sf::Keyboard::Right)
-                                moving_right = false;
+                    switch (event.type)
+                    {
+                    case sf::Event::KeyPressed:
+                        if (event.key.code == sf::Keyboard::Right)
+                            vel.x = 100.f;
 
-                            else if (event.key.code == sf::Keyboard::Up)
-                                moving_up = false;
+                        else if (event.key.code == sf::Keyboard::Up)
+                            vel.y = -100.f;
 
-                            else if (event.key.code == sf::Keyboard::Left)
-                                moving_left = false;
+                        else if (event.key.code == sf::Keyboard::Left)
+                            vel.x = -100.f;
 
-                            else if (event.key.code == sf::Keyboard::Down)
-                                moving_down = false;
-                            break;
-                        case sf::Event::Closed:
-                            window.close();
-                            break;
-                        default:
-                            break;
+                        else if (event.key.code == sf::Keyboard::Down)
+                            vel.y = 100.f;
+                        break;
+                    case sf::Event::KeyReleased:
+                        if (event.key.code == sf::Keyboard::Right || event.key.code == sf::Keyboard::Left)
+                            vel.x = 0.f;
+
+                        else if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::Down)
+                            vel.y = 0.f;
+
+                        // else if (event.key.code == sf::Keyboard::Left)
+                        //     moving_left = false;
+
+                        // else if (event.key.code == sf::Keyboard::Down)
+                        // moving_down = false;
+                        break;
+                    case sf::Event::Closed:
+                        window.close();
+                        break;
+                    default:
+                        break;
                     }
 
                     if (event.type == sf::Event::Closed)
@@ -126,33 +127,8 @@ int main(int argc, char **argv)
                 if (!flrect.intersects(flcirc))
                 {
                     flcirc.intersects(flrect) ? te.setString("True") : te.setString("False");
-                    
-                    
 
-
-                    if(moving_right)
-                        circshape.move(getVel(100.f, 0.f) * clk.getElapsedTime().asSeconds());
-
-                    if(moving_up)
-                        circshape.move(getVel(0.f, -100.f) * clk.getElapsedTime().asSeconds());
-
-                    if(moving_down)
-                        circshape.move(getVel(0.f, 100.f) * clk.getElapsedTime().asSeconds());
-
-                    if(moving_left)
-                        circshape.move(getVel(-100.f, 0.f) * clk.getElapsedTime().asSeconds());
-
-                    if(moving_up && moving_right)
-                        circshape.move(getVel(100.f, -100.f) * clk.getElapsedTime().asSeconds());
-
-                    if(moving_up && moving_left)
-                        circshape.move(getVel(-100.f, -100.f) * clk.getElapsedTime().asSeconds());
-
-                    if(moving_down && moving_right)
-                        circshape.move(getVel(100.f, 100.f) * clk.getElapsedTime().asSeconds());
-
-                    if(moving_down && moving_left)
-                        circshape.move(getVel(-100.f, 100.f) * clk.getElapsedTime().asSeconds());
+                    circshape.move(vel * clk.getElapsedTime().asSeconds());
 
                     rectshape.rotate(spd * clk.getElapsedTime().asSeconds());
                     // rectshape.move(vel * clk.getElapsedTime().asSeconds());
@@ -165,10 +141,8 @@ int main(int argc, char **argv)
 
                 clk.restart();
 
-
                 window.draw(te);
                 window.display();
-
             }
         }
     }
