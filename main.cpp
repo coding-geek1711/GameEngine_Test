@@ -7,10 +7,30 @@
 #include <SFML/Network.hpp>
 #include <SFML/Audio.hpp>
 
+
+/*
+    Some Useful Functions:-
+    1. VideoMode sets video frame size
+    2. CircleShape is for drawing circle ==> radius float
+    3. RectangleShape for rectangle and so on ==> {width, height} (float)
+    4. Top Left is (0,0) and downwards y is +ve
+    5. Time module sets time
+    6. Clock module starts a clock
+    7. setFillColor changes color
+    8. setOrigin is used to set origin of the object relative to sprite
+    9. setPosition is used to set absolute position of sprite in frame
+    10. rotate rotates the object
+*/
+
+#define frame_height 200
+#define frame_width 400
+
+#define rect_dims {100.f, 50.f}
+
 int main(int argc, char **argv)
 {
-    std::cout << "hi this is the first iteration of Game Engine by \
-Maheswaran and S krishna Bhat\n";
+    std::cout << "hi this is the first iteration of Game Engine by\
+    Maheswaran and S krishna Bhat\n";
 
     if (argc > 1)
     {
@@ -46,6 +66,7 @@ Maheswaran and S krishna Bhat\n";
             sf::Vector2f vel(10.f, 0.f);
             float spd = 10.f;
             auto cvel = sf::Vector2f({0.f, -20.f});
+
             while (window.isOpen())
             {
                 sf::Event event;
@@ -54,6 +75,7 @@ Maheswaran and S krishna Bhat\n";
                     if (event.type == sf::Event::Closed)
                         window.close();
                 }
+
                 window.clear();
                 flrect = rectshape.getGlobalBounds();
                 // std::cout << flrect.left << '\n';
@@ -78,6 +100,7 @@ Maheswaran and S krishna Bhat\n";
                 // std::cout << flrect.intersects(flcirc);
                 window.draw(te);
                 window.display();
+
             }
         }
         // std::cout << argv[1];
