@@ -21,8 +21,8 @@
     10. rotate rotates the object
 */
 
-#define frame_height 200
-#define frame_width 400
+#define frame_height 800
+#define frame_width 800
 
 #define rect_dims   \
     {               \
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
             sf::ContextSettings settings;
             settings.antialiasingLevel = 8;
 
-            sf::RenderWindow window(sf::VideoMode(800, 800), "collision_detection.maybe", sf::Style::Default, settings);
+            sf::RenderWindow window(sf::VideoMode(frame_width, frame_height), "collision_detection.maybe", sf::Style::Default, settings);
             sf::Clock clk;
             sf::RectangleShape rectshape({50.f, 50.f});
             rectshape.setPosition({400.f, 150.f});
