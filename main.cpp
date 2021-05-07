@@ -6,7 +6,8 @@
 #include <SFML/System.hpp>
 #include <SFML/Network.hpp>
 #include <SFML/Audio.hpp>
-
+#define frame_height 800
+#define frame_width 800
 /*
     Some Useful Functions:-
     1. VideoMode sets video frame size
@@ -21,27 +22,76 @@
     10. rotate rotates the object
 */
 
-#define frame_height 800
-#define frame_width 800
-
-#define rect_dims   \
-    {               \
-        100.f, 50.f \
-    }
-
 sf::Vector2f getVel(float x, float y)
 {
     return sf::Vector2f({x, y});
 }
 
+void monitorPoll(sf::RenderWindow* window, sf::Vector2f* vel)
+{
+    sf::Event event;
+    while (window->pollEvent(event))
+    {
+        switch (event.type)
+        {
+        case sf::Event::KeyPressed:
+            if (event.key.code == sf::Keyboard::Right)
+                vel->x = 200.f;
+
+            else if (event.key.code == sf::Keyboard::Up)
+                vel->y = -200.f;
+
+            else if (event.key.code == sf::Keyboard::Left)
+                vel->x = -200.f;
+
+            else if (event.key.code == sf::Keyboard::Down)
+                vel->y = 200.f;
+            break;
+        case sf::Event::KeyReleased:
+            if (event.key.code == sf::Keyboard::Right || event.key.code == sf::Keyboard::Left)
+                vel->x = 0.f;
+
+            else if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::Down)
+                vel->y = 0.f;
+
+            break;
+        case sf::Event::Closed:
+            window->close();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+
+template <class T>
+T renderObject(const sf::Vector2f& objectShape, const sf::Vector2f& objectPosition, sf::Color color, const sf::Vector2f& objectOrigin)
+{
+    T object(objectShape);
+    object.setPosition(objectPosition);
+    object.setFillColor(color);
+    object.setOrigin(objectOrigin);
+    return object;
+}
+
+template <class T>
+T renderObject(const float objectShape, const sf::Vector2f& objectPosition, sf::Color color, const sf::Vector2f& objectOrigin)
+{
+    T object(objectShape);
+    object.setPosition(objectPosition);
+    object.setFillColor(color);
+    object.setOrigin(objectOrigin);
+    return object;
+}
+
+
 int main(int argc, char **argv)
 {
     std::cout << "hi this is the first iteration of Game Engine by\
     Maheswaran and S krishna Bhat\n";
-    // bool moving_right = false, moving_left = false, moving_up = false, moving_down = false;
     if (argc > 1)
     {
-        // std::cout << "tihs is nice\n";
         if (strcmp(argv[1], "sfml") == 0)
         {
             sf::ContextSettings settings;
@@ -49,19 +99,12 @@ int main(int argc, char **argv)
 
             sf::RenderWindow window(sf::VideoMode(frame_width, frame_height), "collision_detection.maybe", sf::Style::Default, settings);
             sf::Clock clk;
-            sf::RectangleShape rectshape({50.f, 50.f});
-            rectshape.setPosition({400.f, 150.f});
-            rectshape.setFillColor(sf::Color::Green);
-            rectshape.setOrigin(25.f, 25.f);
-            sf::FloatRect flrect;
 
-            // std::cout << "" << '\n';
+            sf::RectangleShape rectshape = renderObject<sf::RectangleShape>({50.f, 50.f}, {400.f, 150.f}, sf::Color::Green, {25.f, 25.f});
+            sf::CircleShape circshape = renderObject<sf::CircleShape>(50.f, {550.f, 550.f}, sf::Color::Magenta, {25.f, 25.f});
 
-            sf::CircleShape circshape(50.f);
-            circshape.setFillColor(sf::Color::Magenta);
-            circshape.setOrigin({25.f, 25.f});
-            circshape.setPosition({550.f, 550.f});
             sf::FloatRect flcirc;
+            sf::FloatRect flrect;
 
             sf::Text te;
             sf::Font f;
@@ -72,56 +115,12 @@ int main(int argc, char **argv)
 
             sf::Vector2f vel(0.f, 0.f);
             float spd = 10.f;
-            // auto cvel = sf::Vector2f({0.f, -200.f});
             while (window.isOpen())
             {
-                sf::Event event;
-                while (window.pollEvent(event))
-                {
-                    // setKeyPressBools(&moving_up, &moving_right, &moving_down, &moving_left);
-                    std::cout << "EVent registered!!!\n";
-                    switch (event.type)
-                    {
-                    case sf::Event::KeyPressed:
-                        if (event.key.code == sf::Keyboard::Right)
-                            vel.x = 100.f;
-
-                        else if (event.key.code == sf::Keyboard::Up)
-                            vel.y = -100.f;
-
-                        else if (event.key.code == sf::Keyboard::Left)
-                            vel.x = -100.f;
-
-                        else if (event.key.code == sf::Keyboard::Down)
-                            vel.y = 100.f;
-                        break;
-                    case sf::Event::KeyReleased:
-                        if (event.key.code == sf::Keyboard::Right || event.key.code == sf::Keyboard::Left)
-                            vel.x = 0.f;
-
-                        else if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::Down)
-                            vel.y = 0.f;
-
-                        // else if (event.key.code == sf::Keyboard::Left)
-                        //     moving_left = false;
-
-                        // else if (event.key.code == sf::Keyboard::Down)
-                        // moving_down = false;
-                        break;
-                    case sf::Event::Closed:
-                        window.close();
-                        break;
-                    default:
-                        break;
-                    }
-
-                    if (event.type == sf::Event::Closed)
-                        window.close();
-                }
-
+                
+                monitorPoll(&window, &vel);
                 window.clear();
                 flrect = rectshape.getGlobalBounds();
-                // std::cout << flrect.left << '\n';
                 flcirc = circshape.getGlobalBounds();
 
                 if (!flrect.intersects(flcirc))
@@ -131,9 +130,6 @@ int main(int argc, char **argv)
                     circshape.move(vel * clk.getElapsedTime().asSeconds());
 
                     rectshape.rotate(spd * clk.getElapsedTime().asSeconds());
-                    // rectshape.move(vel * clk.getElapsedTime().asSeconds());
-                    // circshape.move(cvel * clk.getElapsedTime().asSeconds());
-                    // std::cout << flrect.intersects(flcirc);
 
                     window.draw(rectshape);
                     window.draw(circshape);
@@ -146,10 +142,6 @@ int main(int argc, char **argv)
             }
         }
     }
-
-    // decide the number of enemies and stuff
-
     return 0;
 }
 
-// Now what?
