@@ -109,12 +109,6 @@ T renderObject(const float objectShape, const sf::Vector2f& objectPosition, sf::
 }
 
 
-class TileMap : public sf::Drawable, public sf::Transformable
-{
-    public:
-};
-
-
 int main(int argc, char **argv)
 {
     std::cout << "hi this is the first iteration of Game Engine by\
@@ -123,13 +117,23 @@ int main(int argc, char **argv)
     int frame_width = 800;
     int frame_height = 800;
 
+    sf::VertexArray m_vertices;
+    sf::Texture texture;
+
+    m_vertices.setPrimitiveType(sf::Quads);
+    m_vertices.resize(frame_height * frame_width * 4);
+
+    getM_Vertices(&m_vertices, &frame_width, &frame_height);
+    if(!texture.loadFromFile("../tiles.png"))
+        std::cout<<"Error in loading textures" << std::endl;
+
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
     sf::RenderWindow window(sf::VideoMode(frame_width, frame_height), "collision_detection.maybe", sf::Style::Default, settings);
     sf::Clock clk;
 
-    sf::RectangleShape rectshape = renderObject<sf::RectangleShape>({50.f, 50.f}, {400.f, 150.f}, sf::Color::Green, {25.f, 25.f});
+    sf::RectangleShape rectshape = renderObject<sf::RectangleShape>({50.f, 50.f}, {400.f, 150.f}, sf::Color::Yellow, {25.f, 25.f});
     sf::CircleShape circshape = renderObject<sf::CircleShape>(50.f, {550.f, 550.f}, sf::Color::Magenta, {25.f, 25.f});
 
     sf::FloatRect flcirc;
@@ -151,7 +155,7 @@ int main(int argc, char **argv)
         window.clear();
         flrect = rectshape.getGlobalBounds();
         flcirc = circshape.getGlobalBounds();
-
+        window.draw(m_vertices, &texture);
         if (!flrect.intersects(flcirc))
         {
             flcirc.intersects(flrect) ? te.setString("True") : te.setString("False");
