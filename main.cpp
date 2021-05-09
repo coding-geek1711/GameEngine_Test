@@ -139,14 +139,14 @@ bool collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshap
 }
 
 
-int* gameArray(int arr[100])
+int* gameArray(int arr[100], int width, int height)
 {
     static int arr1[100];
-    for(int i = 0; i < 6; i++)
+    for(int i = 0; i < width; i++)
     {
-        for(int j = 0; j < 7; j++)
+        for(int j = 0; j < height; j++)
         {
-            arr1[j + i * 7] = arr[i + j * 6];
+            arr1[j + i * height] = arr[i + j * width];
         }
     }
     return arr1;    
@@ -162,17 +162,44 @@ int main(int argc, char **argv)
         {
 
             // level textures
-            int tiles[100] = {
-                4,2,2,1,1,2,
-                1,2,3,1,1,2,
-                1,2,3,1,1,2,
-                1,2,2,3,3,2,
-                1,1,2,1,3,2,
-                1,1,2,1,3,2,
-                1,2,2,1,4,2,
+            int tiles[300] = {
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
+
+                // 4,2,2,1,1,2,1,1,1,1,
+                // 4,2,2,1,1,2,1,1,1,1,
+                // 4,2,2,1,1,2,1,1,1,1,
+                // 4,2,2,1,1,2,1,1,1,1,
+                // 4,2,2,1,1,2,1,1,1,1,
+                // 4,2,2,1,1,2,1,1,1,1,
+                // 4,2,2,1,1,2,1,1,1,1,
+                // 4,2,2,1,1,2,1,1,1,1,
+                // 4,2,2,1,1,2,1,1,1,1,
+                // 4,2,2,1,1,2,1,1,1,1
+
+                // 4,2,2,1,1,2,
+                // 1,2,3,1,1,2,
+                // 1,2,3,1,1,2,
+                // 1,2,2,3,3,2,
+                // 1,1,2,1,3,2,
+                // 1,1,2,1,3,2,
+                // 1,2,2,1,4,2,
             };
             int* tilesInverted;
-            tilesInverted = gameArray(tiles);
+            int height = 15, width = 15;
+            tilesInverted = gameArray(tiles, width, height);
             // std::cout << *tilesInverted << std::endl;
             int frame_width = 640, frame_height = 640;
 
@@ -181,9 +208,9 @@ int main(int argc, char **argv)
             sf::Texture texture;
 
             m_vertices.setPrimitiveType(sf::Quads);
-            m_vertices.resize(frame_height * frame_width * 4);
+            m_vertices.resize(height * width * 4);
 
-            int height = 7, width = 6;
+        
             sf::Vector2f map = sf::Vector2f(width, height);
             sf::Vector2f frameSize = sf::Vector2f(frame_width, frame_height);
             sf::Vector2f tileSize = sf::Vector2f((float)frame_width/width, (float)frame_height/height);
@@ -198,11 +225,11 @@ int main(int argc, char **argv)
             sf::ContextSettings settings;
             settings.antialiasingLevel = 8;
 
-            sf::RenderWindow window(sf::VideoMode(frame_width, frame_height), "collision_detection.maybe", sf::Style::Default, settings);
+            sf::RenderWindow window(sf::VideoMode(800, 800), "collision_detection.maybe", sf::Style::Default, settings);
             sf::Clock clk;
             
-            sf::View view(sf::FloatRect(0.f, 0.f, (float)320, (float)320));
-            view.setViewport(sf::FloatRect(0.25f, 0.25, 0.5f, 0.5f));
+            sf::View view(sf::FloatRect(0.f, 0.f, (float)frame_width/2, (float)frame_height/2));
+            // view.setViewport(sf::FloatRect(0.25f, 0.25, 0.5f, 0.5f));
             view.setCenter(sf::Vector2f(320.f, 320.f));
             sf::RectangleShape rectshape = renderObject<sf::RectangleShape>({50.f, 50.f}, {400.f, 150.f}, sf::Color::Yellow, {25.f, 25.f});
             sf::CircleShape circshape = renderObject<sf::CircleShape>(32.f, {320.f, 320.f}, sf::Color::Magenta, {25.f, 25.f});
