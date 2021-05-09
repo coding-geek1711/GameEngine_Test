@@ -13,14 +13,14 @@ sf::Vector2f getVel(float x, float y)
     return sf::Vector2f({x, y});
 }
 
-void getM_Vertices(sf::VertexArray *m_vertices, sf::Texture* texture, sf::Vector2f tileSize,int *frame_width, int *frame_height, int tiles[100])
+void getM_Vertices(sf::VertexArray *m_vertices, sf::Texture* texture, sf::Vector2f tileSize,int *frame_width, int *frame_height, char* tiles)
 {
     for (int i = 0; i < *frame_width; i++)
     {
         for (int j = 0; j < *frame_height; j++)
         {
 
-            int tileNumber = tiles[i + j * (*frame_width)];
+            char tileNumber = tiles[i + j * (*frame_width)];
 
             // std::cout << "Val is " << tileNumber << std::endl;
             sf::Vertex *quad = &(*m_vertices)[(i + j * (*frame_width)) * 4];
@@ -31,10 +31,10 @@ void getM_Vertices(sf::VertexArray *m_vertices, sf::Texture* texture, sf::Vector
             quad[3].position = sf::Vector2f(i * tileSize.x, (j + 1) * tileSize.y);
 
 
-            quad[0].texCoords = sf::Vector2f(32.f * (float)(tileNumber - 1), 0.f);
-            quad[1].texCoords = sf::Vector2f(32.f * (float)(tileNumber), 0.f);
-            quad[2].texCoords = sf::Vector2f(32.f * (float)(tileNumber), 32.f);
-            quad[3].texCoords = sf::Vector2f(32.f * (float)(tileNumber - 1), 32.f);
+            quad[0].texCoords = sf::Vector2f(32.f * (float)(atoi(&tileNumber) - 1), 0.f);
+            quad[1].texCoords = sf::Vector2f(32.f * (float)(atoi(&tileNumber)), 0.f);
+            quad[2].texCoords = sf::Vector2f(32.f * (float)(atoi(&tileNumber)), 32.f);
+            quad[3].texCoords = sf::Vector2f(32.f * (float)(atoi(&tileNumber) - 1), 32.f);
         }
     }
 }
@@ -97,7 +97,7 @@ T renderObject(const float objectShape, const sf::Vector2f &objectPosition, sf::
 }
 
 
-void collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2f* tileSize, sf::Vector2f* frameSize, sf::Vector2f* map, int* tiles)
+void collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2f* tileSize, sf::Vector2f* frameSize, sf::Vector2f* map, char* tiles)
 {
     bool val = false;
     sf::FloatRect fltrect = rectshape->getGlobalBounds();
@@ -109,26 +109,9 @@ void collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshap
 
     int tileNumber = tile_col * (int) map->y + tile_row;
 
-    int tileType = *(tiles + tileNumber);
+    char tileType = tiles[tileNumber];
 
-    switch(tileType)
-    {
-        case 1:
-            std::cout << "Grass \n";
-            break;
-        
-        case 2:
-            std::cout << "Water \n";
-            break;
-        
-        case 3:
-            std::cout << "Tree \n";
-            break;
-
-        case 4:
-            std::cout << "Stone \n";
-            break;
-    }
+    tileType == '1' ? std::cout << "Grass\n" : tileType == '2' ? std::cout << "Water\n" : tileType == '3' ? std::cout << "Tree\n" : tileType == '4' ? std::cout << "Stone\n" : std::cout << "Void\n"; 
 
     // for(int i = 0; i < 42; i++)
     // {
@@ -147,9 +130,9 @@ void collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshap
     // return val;
 }
 
-int* gameArray(int arr[100])
+char* gameArray(char arr[100])
 {
-    static int arr1[100];
+    static char arr1[100];
     for(int i = 0; i < 6; i++)
     {
         for(int j = 0; j < 7; j++)
@@ -157,7 +140,7 @@ int* gameArray(int arr[100])
             arr1[j + i * 7] = arr[i + j * 6];
         }
     }
-    return arr1;    
+    return arr1;
 }
 
 int main(int argc, char **argv)
@@ -170,16 +153,17 @@ int main(int argc, char **argv)
         {
 
             // level textures
-            int tiles[100] = {
-                4,2,2,1,1,2,
-                1,2,3,1,1,2,
-                1,2,3,1,1,2,
-                1,2,2,3,3,2,
-                1,1,2,1,3,2,
-                1,1,2,1,3,2,
-                1,2,2,1,4,2,
-            };
-            int* tilesInverted;
+            // int tiles[100] = {
+            //     4,2,2,1,1,2,
+            //     1,2,3,1,1,2,
+            //     1,2,3,1,1,2,
+            //     1,2,2,3,3,2,
+            //     1,1,2,1,3,2,
+            //     1,1,2,1,3,2,
+            //     1,2,2,1,4,2,
+            // };
+            char tiles[100] = "422112123112123112122332112132112132122142";
+            char* tilesInverted;
             tilesInverted = gameArray(tiles);
             // std::cout << *tilesInverted << std::endl;
             int frame_width = 640, frame_height = 640;
