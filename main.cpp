@@ -96,6 +96,70 @@ T renderObject(const float objectShape, const sf::Vector2f &objectPosition, sf::
     return object;
 }
 
+
+void collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2f* tileSize, sf::Vector2f* frameSize, sf::Vector2f* map, int* tiles)
+{
+    bool val = false;
+    sf::FloatRect fltrect = rectshape->getGlobalBounds();
+    sf::FloatRect fltcirc = circshape->getGlobalBounds();
+    sf::Vector2f shapePosition = circshape->getPosition();
+
+    int tile_col = (int)(shapePosition.x / tileSize->x);
+    int tile_row = (int)(shapePosition.y / tileSize->y);
+
+    int tileNumber = tile_col * (int) map->y + tile_row;
+
+    int tileType = *(tiles + tileNumber);
+
+    switch(tileType)
+    {
+        case 1:
+            std::cout << "Grass \n";
+            break;
+        
+        case 2:
+            std::cout << "Water \n";
+            break;
+        
+        case 3:
+            std::cout << "Tree \n";
+            break;
+
+        case 4:
+            std::cout << "Stone \n";
+            break;
+    }
+
+    // for(int i = 0; i < 42; i++)
+    // {
+    //     std::cout << *(tiles + i) << std::endl;
+    // }
+    // std::cout << "+++++++++++++++++\n";
+    // for(int i = 0; i < 6; i++)
+    // {
+    //     for(int j = 0; j < 7; j++)
+    //     {
+    //         // game arrat recieved;
+    //         // std::cout << *(tiles + i*7 + j) << " ";
+    //     }
+    // }
+
+    // return val;
+}
+
+int* gameArray(int arr[100])
+{
+    static int arr1[100];
+    for(int i = 0; i < 6; i++)
+    {
+        for(int j = 0; j < 7; j++)
+        {
+            arr1[j + i * 7] = arr[i + j * 6];
+        }
+    }
+    return arr1;    
+}
+
 int main(int argc, char **argv)
 {
     std::cout << "Some Game Engine by Maheswaran and S Krishna Bhat \n";
@@ -107,15 +171,17 @@ int main(int argc, char **argv)
 
             // level textures
             int tiles[100] = {
-                1,2,2,1,1,2,
-                1,2,2,1,1,2,
-                1,2,2,1,1,2,
+                4,2,2,1,1,2,
+                1,2,3,1,1,2,
+                1,2,3,1,1,2,
                 1,2,2,3,3,2,
-                1,2,2,1,3,2,
-                1,2,2,1,3,2,
+                1,1,2,1,3,2,
+                1,1,2,1,3,2,
                 1,2,2,1,4,2,
             };
-
+            int* tilesInverted;
+            tilesInverted = gameArray(tiles);
+            // std::cout << *tilesInverted << std::endl;
             int frame_width = 640, frame_height = 640;
 
             // Initialize vertexarray and texture classes
@@ -126,9 +192,12 @@ int main(int argc, char **argv)
             m_vertices.resize(frame_height * frame_width * 4);
 
             int height = 7, width = 6;
-            float tileSize_y = (float)frame_height/height;
-            float tileSize_x = (float)frame_width/width;
-            getM_Vertices(&m_vertices, &texture, sf::Vector2f(tileSize_x, tileSize_y), &width, &height, tiles);
+            sf::Vector2f map = sf::Vector2f(width, height);
+            sf::Vector2f frameSize = sf::Vector2f(frame_width, frame_height);
+            sf::Vector2f tileSize = sf::Vector2f((float)frame_width/width, (float)frame_height/height);
+            // float tileSize_y = (float)frame_height/height;
+            // float tileSize_x = (float)frame_width/width;
+            getM_Vertices(&m_vertices, &texture, tileSize, &width, &height, tiles);
 
             if (!texture.loadFromFile("assets/textures/tiles.png"))
                 std::cout << "Error in loading textures" << std::endl;
@@ -165,6 +234,7 @@ int main(int argc, char **argv)
                 window.clear();
                 flrect = rectshape.getGlobalBounds();
                 flcirc = circshape.getGlobalBounds();
+                collision_detection(&rectshape, &circshape, &tileSize, &frameSize, &map, tilesInverted);
                 window.draw(m_vertices, &texture);
                 if (!flrect.intersects(flcirc))
                 {
