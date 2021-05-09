@@ -97,7 +97,7 @@ T renderObject(const float objectShape, const sf::Vector2f &objectPosition, sf::
 }
 
 
-void collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2f* tileSize, sf::Vector2f* frameSize, sf::Vector2f* map, char* tiles)
+bool collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2f* tileSize, sf::Vector2f* frameSize, sf::Vector2f* map, char* tiles)
 {
     bool val = false;
     sf::FloatRect fltrect = rectshape->getGlobalBounds();
@@ -113,21 +113,10 @@ void collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshap
 
     tileType == '1' ? std::cout << "Grass\n" : tileType == '2' ? std::cout << "Water\n" : tileType == '3' ? std::cout << "Tree\n" : tileType == '4' ? std::cout << "Stone\n" : std::cout << "Void\n"; 
 
-    // for(int i = 0; i < 42; i++)
-    // {
-    //     std::cout << *(tiles + i) << std::endl;
-    // }
-    // std::cout << "+++++++++++++++++\n";
-    // for(int i = 0; i < 6; i++)
-    // {
-    //     for(int j = 0; j < 7; j++)
-    //     {
-    //         // game arrat recieved;
-    //         // std::cout << *(tiles + i*7 + j) << " ";
-    //     }
-    // }
+    if(fltcirc.intersects(fltrect))
+        return true;
 
-    // return val;
+    return false;
 }
 
 char* gameArray(char arr[100])
@@ -192,9 +181,12 @@ int main(int argc, char **argv)
 
             sf::RenderWindow window(sf::VideoMode(frame_width, frame_height), "collision_detection.maybe", sf::Style::Default, settings);
             sf::Clock clk;
-
+            
+            sf::View view(sf::FloatRect(0.f, 0.f, (float)320, (float)320));
+            view.setViewport(sf::FloatRect(0.25f, 0.25, 0.5f, 0.5f));
+            view.setCenter(sf::Vector2f(320.f, 320.f));
             sf::RectangleShape rectshape = renderObject<sf::RectangleShape>({50.f, 50.f}, {400.f, 150.f}, sf::Color::Yellow, {25.f, 25.f});
-            sf::CircleShape circshape = renderObject<sf::CircleShape>(32.f, {550.f, 550.f}, sf::Color::Magenta, {25.f, 25.f});
+            sf::CircleShape circshape = renderObject<sf::CircleShape>(32.f, {320.f, 320.f}, sf::Color::Magenta, {25.f, 25.f});
 
             sf::FloatRect flcirc;
             sf::FloatRect flrect;
@@ -216,14 +208,15 @@ int main(int argc, char **argv)
 
                 monitorPoll(&window, &vel);
                 window.clear();
+                window.setView(view);
                 flrect = rectshape.getGlobalBounds();
                 flcirc = circshape.getGlobalBounds();
-                collision_detection(&rectshape, &circshape, &tileSize, &frameSize, &map, tilesInverted);
+                bool doesCollide = collision_detection(&rectshape, &circshape, &tileSize, &frameSize, &map, tilesInverted);
                 window.draw(m_vertices, &texture);
-                if (!flrect.intersects(flcirc))
+                if (!doesCollide)
                 {
                     flcirc.intersects(flrect) ? te.setString("True") : te.setString("False");
-
+                    view.move(vel * clk.getElapsedTime().asSeconds());
                     circshape.move(vel * clk.getElapsedTime().asSeconds());
 
                     rectshape.rotate(spd * clk.getElapsedTime().asSeconds());
