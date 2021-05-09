@@ -13,7 +13,7 @@ sf::Vector2f getVel(float x, float y)
     return sf::Vector2f({x, y});
 }
 
-void getM_Vertices(sf::VertexArray *m_vertices, int *frame_width, int *frame_height, int tiles[100])
+void getM_Vertices(sf::VertexArray *m_vertices, sf::Texture* texture, sf::Vector2f tileSize,int *frame_width, int *frame_height, int tiles[100])
 {
     for (int i = 0; i < *frame_width; i++)
     {
@@ -21,18 +21,15 @@ void getM_Vertices(sf::VertexArray *m_vertices, int *frame_width, int *frame_hei
         {
 
             int tileNumber = tiles[i + j * (*frame_width)];
+
             // std::cout << "Val is " << tileNumber << std::endl;
             sf::Vertex *quad = &(*m_vertices)[(i + j * (*frame_width)) * 4];
 
-            quad[0].position = sf::Vector2f(i * 100, j * 100);
-            quad[1].position = sf::Vector2f((i + 1) * 100, j * 100);
-            quad[2].position = sf::Vector2f((i + 1) * 100, (j + 1) * 100);
-            quad[3].position = sf::Vector2f(i * 100, (j + 1) * 100);
+            quad[0].position = sf::Vector2f(i * tileSize.x, j * tileSize.y);
+            quad[1].position = sf::Vector2f((i + 1) * tileSize.x, j * tileSize.y);
+            quad[2].position = sf::Vector2f((i + 1) * tileSize.x, (j + 1) * tileSize.y);
+            quad[3].position = sf::Vector2f(i * tileSize.x, (j + 1) * tileSize.y);
 
-            // quad[0].texCoords = sf::Vector2f(0.f, 0.f);
-            // quad[1].texCoords = sf::Vector2f(25.f, 0.f);
-            // quad[2].texCoords = sf::Vector2f(25.f, 25.f);
-            // quad[3].texCoords = sf::Vector2f(0.f, 25.f);
 
             quad[0].texCoords = sf::Vector2f(32.f * (float)(tileNumber - 1), 0.f);
             quad[1].texCoords = sf::Vector2f(32.f * (float)(tileNumber), 0.f);
@@ -110,42 +107,13 @@ int main(int argc, char **argv)
 
             // level textures
             int tiles[100] = {
-                1,
-                2,
-                2,
-                1,
-                1,
-                2,
-                1,
-                2,
-                2,
-                1,
-                1,
-                2,
-                1,
-                2,
-                2,
-                1,
-                1,
-                2,
-                1,
-                2,
-                2,
-                3,
-                3,
-                2,
-                1,
-                2,
-                2,
-                1,
-                3,
-                2,
-                1,
-                2,
-                2,
-                1,
-                3,
-                2,
+                1,2,2,1,1,2,
+                1,2,2,1,1,2,
+                1,2,2,1,1,2,
+                1,2,2,3,3,2,
+                1,2,2,1,3,2,
+                1,2,2,1,3,2,
+                1,2,2,1,4,2,
             };
 
             int frame_width = 640, frame_height = 640;
@@ -157,8 +125,10 @@ int main(int argc, char **argv)
             m_vertices.setPrimitiveType(sf::Quads);
             m_vertices.resize(frame_height * frame_width * 4);
 
-            int height = 6, width = 6;
-            getM_Vertices(&m_vertices, &height, &width, tiles);
+            int height = 7, width = 6;
+            float tileSize_y = (float)frame_height/height;
+            float tileSize_x = (float)frame_width/width;
+            getM_Vertices(&m_vertices, &texture, sf::Vector2f(tileSize_x, tileSize_y), &width, &height, tiles);
 
             if (!texture.loadFromFile("assets/textures/tiles.png"))
                 std::cout << "Error in loading textures" << std::endl;
@@ -171,7 +141,7 @@ int main(int argc, char **argv)
             sf::Clock clk;
 
             sf::RectangleShape rectshape = renderObject<sf::RectangleShape>({50.f, 50.f}, {400.f, 150.f}, sf::Color::Yellow, {25.f, 25.f});
-            sf::CircleShape circshape = renderObject<sf::CircleShape>(50.f, {550.f, 550.f}, sf::Color::Magenta, {25.f, 25.f});
+            sf::CircleShape circshape = renderObject<sf::CircleShape>(32.f, {550.f, 550.f}, sf::Color::Magenta, {25.f, 25.f});
 
             sf::FloatRect flcirc;
             sf::FloatRect flrect;
