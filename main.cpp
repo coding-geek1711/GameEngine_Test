@@ -13,14 +13,14 @@ sf::Vector2f getVel(float x, float y)
     return sf::Vector2f({x, y});
 }
 
-void getM_Vertices(sf::VertexArray *m_vertices, sf::Texture* texture, sf::Vector2f tileSize,int *frame_width, int *frame_height, int tiles[100])
+void getM_Vertices(sf::VertexArray *m_vertices, sf::Texture* texture, sf::Vector2f tileSize,int *frame_width, int *frame_height, char* tiles)
 {
     for (int i = 0; i < *frame_width; i++)
     {
         for (int j = 0; j < *frame_height; j++)
         {
 
-            int tileNumber = tiles[i + j * (*frame_width)];
+            char tileNumber = tiles[i + j * (*frame_width)];
 
             // std::cout << "Val is " << tileNumber << std::endl;
             sf::Vertex *quad = &(*m_vertices)[(i + j * (*frame_width)) * 4];
@@ -31,10 +31,10 @@ void getM_Vertices(sf::VertexArray *m_vertices, sf::Texture* texture, sf::Vector
             quad[3].position = sf::Vector2f(i * tileSize.x, (j + 1) * tileSize.y);
 
 
-            quad[0].texCoords = sf::Vector2f(32.f * (float)(tileNumber - 1), 0.f);
-            quad[1].texCoords = sf::Vector2f(32.f * (float)(tileNumber), 0.f);
-            quad[2].texCoords = sf::Vector2f(32.f * (float)(tileNumber), 32.f);
-            quad[3].texCoords = sf::Vector2f(32.f * (float)(tileNumber - 1), 32.f);
+            quad[0].texCoords = sf::Vector2f(32.f * (float)(atoi(&tileNumber) - 1), 0.f);
+            quad[1].texCoords = sf::Vector2f(32.f * (float)(atoi(&tileNumber)), 0.f);
+            quad[2].texCoords = sf::Vector2f(32.f * (float)(atoi(&tileNumber)), 32.f);
+            quad[3].texCoords = sf::Vector2f(32.f * (float)(atoi(&tileNumber) - 1), 32.f);
         }
     }
 }
@@ -97,7 +97,7 @@ T renderObject(const float objectShape, const sf::Vector2f &objectPosition, sf::
 }
 
 
-bool collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2f* tileSize, sf::Vector2f* frameSize, sf::Vector2f* map, int* tiles)
+bool collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2f* tileSize, sf::Vector2f* frameSize, sf::Vector2f* map, char* tiles)
 {
     bool val = false;
     sf::FloatRect fltrect = rectshape->getGlobalBounds();
@@ -109,28 +109,9 @@ bool collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshap
 
     int tileNumber = tile_col * (int) map->y + tile_row;
 
-    int tileType = *(tiles + tileNumber);
+    char tileType = tiles[tileNumber];
 
-
-    switch(tileType)
-    {
-        case 1:
-            std::cout << "Grass \n";
-            break;
-        
-        case 2:
-            std::cout << "Water \n";
-            // return true;
-            break;
-        
-        case 3:
-            std::cout << "Tree \n";
-            break;
-
-        case 4:
-            std::cout << "Stone \n";
-            break;
-    }
+    tileType == '1' ? std::cout << "Grass\n" : tileType == '2' ? std::cout << "Water\n" : tileType == '3' ? std::cout << "Tree\n" : tileType == '4' ? std::cout << "Stone\n" : std::cout << "Void\n"; 
 
     if(fltcirc.intersects(fltrect))
         return true;
@@ -138,10 +119,9 @@ bool collision_detection(sf::RectangleShape* rectshape,sf::CircleShape* circshap
     return false;
 }
 
-
-int* gameArray(int arr[100], int width, int height)
+char* gameArray(char arr[10000], int height, int width)
 {
-    static int arr1[100];
+    static char arr1[10000];
     for(int i = 0; i < width; i++)
     {
         for(int j = 0; j < height; j++)
@@ -149,7 +129,7 @@ int* gameArray(int arr[100], int width, int height)
             arr1[j + i * height] = arr[i + j * width];
         }
     }
-    return arr1;    
+    return arr1;
 }
 
 int main(int argc, char **argv)
@@ -162,44 +142,24 @@ int main(int argc, char **argv)
         {
 
             // level textures
-            int tiles[300] = {
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-                4,2,2,1,1,2,1,1,1,1,1,2,3,1,1,
-
-                // 4,2,2,1,1,2,1,1,1,1,
-                // 4,2,2,1,1,2,1,1,1,1,
-                // 4,2,2,1,1,2,1,1,1,1,
-                // 4,2,2,1,1,2,1,1,1,1,
-                // 4,2,2,1,1,2,1,1,1,1,
-                // 4,2,2,1,1,2,1,1,1,1,
-                // 4,2,2,1,1,2,1,1,1,1,
-                // 4,2,2,1,1,2,1,1,1,1,
-                // 4,2,2,1,1,2,1,1,1,1,
-                // 4,2,2,1,1,2,1,1,1,1
-
-                // 4,2,2,1,1,2,
-                // 1,2,3,1,1,2,
-                // 1,2,3,1,1,2,
-                // 1,2,2,3,3,2,
-                // 1,1,2,1,3,2,
-                // 1,1,2,1,3,2,
-                // 1,2,2,1,4,2,
-            };
-            int* tilesInverted;
-            int height = 15, width = 15;
-            tilesInverted = gameArray(tiles, width, height);
+            // int tiles[100] = {
+            //     4,2,2,1,1,2,
+            //     1,2,3,1,1,2,
+            //     1,2,3,1,1,2,
+            //     1,2,2,3,3,2,
+            //     1,1,2,1,3,2,
+            //     1,1,2,1,3,2,
+            //     1,2,2,1,4,2,
+            // };
+            // char tiles[100] = "422112123112123112122332112132112132122142";
+            char tiles[10000];
+            for(int i = 0; i < 10000; i++)
+            {
+                tiles[i] = '3';
+            }
+            char* tilesInverted;
+            int height = 100, width = 100;
+            tilesInverted = gameArray(tiles,height, width);
             // std::cout << *tilesInverted << std::endl;
             int frame_width = 640, frame_height = 640;
 
@@ -208,7 +168,8 @@ int main(int argc, char **argv)
             sf::Texture texture;
 
             m_vertices.setPrimitiveType(sf::Quads);
-            m_vertices.resize(height * width * 4);
+            m_vertices.resize(frame_height * frame_width * 4);
+            
 
         
             sf::Vector2f map = sf::Vector2f(width, height);
@@ -231,6 +192,7 @@ int main(int argc, char **argv)
             sf::View view(sf::FloatRect(0.f, 0.f, (float)frame_width/2, (float)frame_height/2));
             // view.setViewport(sf::FloatRect(0.25f, 0.25, 0.5f, 0.5f));
             view.setCenter(sf::Vector2f(320.f, 320.f));
+            
             sf::RectangleShape rectshape = renderObject<sf::RectangleShape>({50.f, 50.f}, {400.f, 150.f}, sf::Color::Yellow, {25.f, 25.f});
             sf::CircleShape circshape = renderObject<sf::CircleShape>(32.f, {320.f, 320.f}, sf::Color::Magenta, {25.f, 25.f});
 
