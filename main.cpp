@@ -26,7 +26,7 @@ class TileMap : public sf::Drawable , sf::Transformable
             m_vertices.setPrimitiveType(sf::Quads);
             m_vertices.resize(height * width * 4);    
 
-            int count = 1;
+            
             // std::cout << height * width * 4 <<std::endl;
             for(int i = 0; i < width; i++)
                 for(int j = 0; j < height; j++)
@@ -40,7 +40,7 @@ class TileMap : public sf::Drawable , sf::Transformable
                     // std::cout << tx << " " << ty << std::endl;
                     sf::Vertex* quad = &m_vertices[(i + j*width) * 4];
                     // std::cout << "Quad index "<< count << std::endl;
-                    count++;
+                    
                     quad[0].position = sf::Vector2f(i * tileSize.x, j * tileSize.y);
                     quad[1].position = sf::Vector2f((i + 1) * tileSize.x, j * tileSize.y);
                     quad[2].position = sf::Vector2f((i + 1) * tileSize.x, (j + 1) * tileSize.y);
@@ -91,8 +91,35 @@ class TileMap : public sf::Drawable , sf::Transformable
         }
 };
 
-void monitorPoll(sf::RenderWindow *window, sf::Vector2f *vel)
+
+struct DeclareVariables
 {
+    sf::RectangleShape rectshape;
+    sf::CircleShape circshape;
+   
+    sf::FloatRect flcirc;
+    sf::FloatRect flrect;
+
+    sf::Vector2f circvel = sf::Vector2f(0.f, 0.f);
+    sf::Vector2f sqrvel = sf::Vector2f(0.f, 0.f);
+
+    float spd = 10.f;
+
+    sf::Clock clk;
+    sf::Clock clksqr;
+};
+
+
+void monitorPoll(sf::RenderWindow *window, sf::Vector2f *vel, sf::Vector2f* sqrvel, sf::Clock* clk, int* val)
+{
+    // set sqrvel
+    if((int)clk->getElapsedTime().asSeconds() >= *val)
+    {
+        sqrvel->x *= -1;
+        clk->restart();
+    }
+
+    // set circvel
     sf::Event event;
     while (window->pollEvent(event))
     {
@@ -163,8 +190,6 @@ bool doesCollide(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::V
 {
     sf::Vector2f shapePosition = circshape->getPosition();
 
-   
-
     int tile_col = (int)(shapePosition.x / tileSize->x);
     int tile_row = (int)(shapePosition.y / tileSize->y);
 
@@ -172,7 +197,21 @@ bool doesCollide(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::V
 
     int tileType = tiles[tileNumber];
 
-    // std::cout<<tileType<<std::endl;
+    switch(tileType)
+    {
+        case 0:
+            break;
+        case 1:
+            return true;
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default:
+            return true;
+            break;
+    }
 
     tileType == 0 ? std::cout << "Grass\n" : tileType == 1 ? std::cout << "Water\n" : tileType == 2 ? std::cout << "Tree\n" : tileType == 3 ? std::cout << "Stone\n" : std::cout << "Void\n"; 
 
@@ -195,9 +234,14 @@ int main()
     int tiles[] = {
         1, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
         1, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        1, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        1, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
+        1, 0 ,0, 0, 0, 1, 3, 3, 3, 3, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
+        1, 1 ,1, 1, 1, 1, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 1 ,0, 0, 0, 1, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0 ,0, 0, 0, 0, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0 ,0, 2, 2, 0, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0 ,0, 0, 0, 0, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0 ,2, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
@@ -207,58 +251,51 @@ int main()
         0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 5, 
     };
     int* invertedTiles = invertGameArray(tiles, &height, &width);
 
     sf::Vector2u tileSize = sf::Vector2u(64,64);
     sf::Vector2u mapSize = sf::Vector2u(width, height);
 
-    if(!map.load_tilemap("assets/textures/tiles.png", tileSize,tiles, height, width))
+    if(!map.load_tilemap("assets/textures/tiles.png", tileSize, tiles, height, width))
         return -1;
 
-    // entities
+    // View Port
     sf::View view(sf::FloatRect(0.f, 0.f, (float)frame_width/2, (float)frame_height/2));
     view.setViewport(sf::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
     view.setCenter(sf::Vector2f((float)frame_height/2, (float)frame_width /2));
 
-    sf::RectangleShape rectshape = renderObject<sf::RectangleShape>({50.f, 50.f}, {400.f, 150.f}, sf::Color::Yellow, {25.f, 25.f});
-    sf::CircleShape circshape = renderObject<sf::CircleShape>(32.f, {320.f, 320.f}, sf::Color::Magenta, {25.f, 25.f});
+     // Initialize variables
+    DeclareVariables s = DeclareVariables();
+    s.rectshape = renderObject<sf::RectangleShape>({50.f, 50.f}, {400.f, 150.f}, sf::Color::Yellow, {25.f, 25.f});
+    s.circshape = renderObject<sf::CircleShape>(24.f, {320.f, 320.f}, sf::Color::Magenta, {25.f, 25.f});
 
-    sf::FloatRect flcirc;
-    sf::FloatRect flrect;
-
-    sf::Vector2f vel(0.f, 0.f);
-    float spd = 10.f;
+    s.sqrvel.x = 100.f;
+    int val = tileSize.x * 4 / (int)s.sqrvel.x;
     
-    sf::Clock clk;
-
-
     while(window.isOpen())
     {
         window.clear();
         window.setView(view);
         window.draw(map);
-        monitorPoll(&window, &vel);
+        monitorPoll(&window, &s.circvel, &s.sqrvel, &s.clksqr, &val);
 
-        flcirc = circshape.getGlobalBounds();
-        flrect = rectshape.getGlobalBounds();
+        s.flcirc = s.circshape.getGlobalBounds();
+        s.flrect = s.rectshape.getGlobalBounds();
         
-        if(!doesCollide(&rectshape, &circshape, &tileSize, &mapSize, invertedTiles))
+        if(!doesCollide(&s.rectshape, &s.circshape, &tileSize, &mapSize, invertedTiles))
         {
-            view.move(vel * clk.getElapsedTime().asSeconds());
-            circshape.move(vel * clk.getElapsedTime().asSeconds());
-            rectshape.rotate(spd * clk.getElapsedTime().asSeconds());
+            view.move(s.circvel * s.clk.getElapsedTime().asSeconds());
+            
+            s.circshape.move(s.circvel * s.clk.getElapsedTime().asSeconds());
+            s.rectshape.rotate(s.spd * s.clk.getElapsedTime().asSeconds());
+            s.rectshape.move(s.sqrvel * s.clk.getElapsedTime().asSeconds());
 
-            window.draw(rectshape);
-            window.draw(circshape);
+            window.draw(s.rectshape);
+            window.draw(s.circshape);
         }
-        clk.restart();
+        s.clk.restart();
         
         window.display();
     }
