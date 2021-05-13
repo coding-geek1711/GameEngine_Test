@@ -1,12 +1,17 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <fstream>
 #include <string.h>
 #include <typeinfo>
+
+int charToInt(char d){
+    return atoi(&d);
+}
 
 class TileMap : public sf::Drawable , sf::Transformable
 {
     public:
-        bool load_tilemap(const std::string tileset, sf::Vector2u tileSize, int* tiles, int height, int width)
+        bool load_tilemap(const std::string tileset, sf::Vector2u tileSize, char* tiles, int height, int width)
         {
             /*
                 height ==> rows
@@ -31,7 +36,9 @@ class TileMap : public sf::Drawable , sf::Transformable
             for(int i = 0; i < width; i++)
                 for(int j = 0; j < height; j++)
                 {
-                    int tileNumber = tiles[i + j*width];
+                    // std::cout << "this is before "<< tiles[i+j*width] << '\n';
+                    int tileNumber = charToInt(tiles[i+j*width]);
+                    std::cout << tileNumber << '\n';
                     // std::cout << "TileNumber is " << tileNumber << std::endl;
 
                     int tx = tileNumber % (textures.getSize().x / tileSize.x);
@@ -175,18 +182,18 @@ T renderObject(const float objectShape, const sf::Vector2f &objectPosition, sf::
     return object;
 }
 
-int* invertGameArray(int arr[20*20], int* height, int* width)
+char* invertGameArray(char arr[20*20], int height, int width)
 {
-    static int arr1[20*20];
-    for(int i =0; i < *width; i++)
-        for(int j = 0; j < *height; j++)
-            arr1[j + i * (*height)] = arr[i + j * (*width)];
+    static char arr1[20*20];
+    for(int i =0; i < width; i++)
+        for(int j = 0; j < height; j++)
+            arr1[j + i * (height)] = arr[i + j * (width)];
     
     return arr1;
 }
 
 
-bool doesCollide(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2u* tileSize, sf::Vector2u* mapSize, int* tiles)
+bool doesCollide(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2u* tileSize, sf::Vector2u* mapSize, char* tiles)
 {
     sf::Vector2f shapePosition = circshape->getPosition();
 
@@ -195,7 +202,7 @@ bool doesCollide(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::V
 
     int tileNumber = tile_col * (int) mapSize->y + tile_row;
 
-    int tileType = tiles[tileNumber];
+    int tileType = charToInt(tiles[tileNumber]);
 
     switch(tileType)
     {
@@ -231,29 +238,14 @@ int main()
     sf::RenderWindow window(sf::VideoMode(frame_width, frame_height), "collision_detection.maybe", sf::Style::Default, settings);
     TileMap map;
 
-    int tiles[] = {
-        1, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        1, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        1, 0 ,0, 0, 0, 1, 3, 3, 3, 3, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        1, 1 ,1, 1, 1, 1, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 1 ,0, 0, 0, 1, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 2, 2, 0, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 3, 3, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,2, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 5, 
-    };
-    int* invertedTiles = invertGameArray(tiles, &height, &width);
+    std::fstream mapfile;
+    mapfile.open("maps/mainmap.txt", std::ios::in);
+
+
+    char tiles[400];
+    mapfile >> tiles;
+    std::cout << tiles << '\n';
+    char* invertedTiles = invertGameArray(tiles, height, width);
 
     sf::Vector2u tileSize = sf::Vector2u(64,64);
     sf::Vector2u mapSize = sf::Vector2u(width, height);
