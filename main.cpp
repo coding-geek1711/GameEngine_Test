@@ -11,7 +11,7 @@ int charToInt(char d){
 class TileMap : public sf::Drawable , sf::Transformable
 {
     public:
-        bool load_tilemap(const std::string tileset, sf::Vector2u tileSize, char* tiles, int height, int width)
+        bool load_tilemap(const std::string tileset, sf::Vector2u tileSize, std::string tiles, int height, int width)
         {
             /*
                 height ==> rows
@@ -182,18 +182,19 @@ T renderObject(const float objectShape, const sf::Vector2f &objectPosition, sf::
     return object;
 }
 
-char* invertGameArray(char arr[20*20], int height, int width)
+std::string invertGameArray(std::string arr, int height, int width)
 {
-    static char arr1[20*20];
+    // static char arr1[20*20]; static is dangerous (plays MJ's dangerous)
+    char arr1[400];
     for(int i =0; i < width; i++)
         for(int j = 0; j < height; j++)
             arr1[j + i * (height)] = arr[i + j * (width)];
     
-    return arr1;
+    return std::string(arr1);
 }
 
 
-bool doesCollide(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2u* tileSize, sf::Vector2u* mapSize, char* tiles)
+bool doesCollide(sf::RectangleShape* rectshape,sf::CircleShape* circshape, sf::Vector2u* tileSize, sf::Vector2u* mapSize, std::string tiles)
 {
     sf::Vector2f shapePosition = circshape->getPosition();
 
@@ -242,10 +243,10 @@ int main()
     mapfile.open("maps/mainmap.txt", std::ios::in);
 
 
-    char tiles[400];
+    std::string tiles;
     mapfile >> tiles;
     std::cout << tiles << '\n';
-    char* invertedTiles = invertGameArray(tiles, height, width);
+    std::string invertedTiles = invertGameArray(tiles, height, width);
 
     sf::Vector2u tileSize = sf::Vector2u(64,64);
     sf::Vector2u mapSize = sf::Vector2u(width, height);
